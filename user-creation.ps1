@@ -1,3 +1,4 @@
+Connect-AzureAD
 # Generate a new ImmutableId
 $ImmutableId = [Convert]::ToBase64String(([guid]::NewGuid()).ToByteArray())
 
