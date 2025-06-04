@@ -1,15 +1,17 @@
 import msal
 import requests
+import base64
+import uuid
 
-# Config
-CLIENT_ID = '5ef7058c-a5fc-4ec0-9e2c-e1a5d9b3d0d2'
-CLIENT_SECRET = 'ZMl8Q~5ekf3TgFz6cR4TuChCwR9aL2xEmLEZkcyO'
-TENANT_ID = '2b77ce0a-6f13-450b-85a5-0ac0aa2fd552'
+# === CONFIGURATION ===
+CLIENT_ID = "ca88d5a8-1b7b-4d6e-99a0-0b2d1bf6e05a"
+TENANT_ID = "2b77ce0a-6f13-450b-85a5-0ac0aa2fd552"
+CLIENT_SECRET = "n1v8Q~i1wNXCmDJ2wWehDgCSkNNB_MZWSD4YRaID"
 AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
 SCOPE = ["https://graph.microsoft.com/.default"]
 GRAPH_API_ENDPOINT = "https://graph.microsoft.com/v1.0"
 
-# Authenticate and get token
+# === AUTHENTICATION ===
 def get_access_token():
     app = msal.ConfidentialClientApplication(
         CLIENT_ID,
@@ -18,16 +20,20 @@ def get_access_token():
     )
     result = app.acquire_token_for_client(scopes=SCOPE)
     if "access_token" in result:
-        return result['access_token']
+        return result["access_token"]
     else:
-        raise Exception(f"Could not get access token: {result.get('error_description')}")
+        raise Exception(f"Token error: {result.get('error_description')}")
 
-# Create a new user
-def create_user(token, display_name, user_principal_name, password):
+# === CREATE FEDERATED USER ===
+def create_federated_user(token, display_name, user_principal_name, password):
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
+
+    # Generate a base64-encoded GUID as the immutableId (SourceAnchor)
+    immutable_id = base64.b64encode(uuid.uuid4().bytes).decode("utf-8")
+
     user_data = {
         "accountEnabled": True,
         "displayName": display_name,
@@ -36,36 +42,20 @@ def create_user(token, display_name, user_principal_name, password):
         "passwordProfile": {
             "forceChangePasswordNextSignIn": True,
             "password": password
-        }
+        },
+        "immutableId": immutable_id
     }
+
     response = requests.post(f"{GRAPH_API_ENDPOINT}/users", headers=headers, json=user_data)
     if response.status_code == 201:
-        print(f"User {user_principal_name} created successfully.")
+        print(f"✅ User '{user_principal_name}' created successfully.")
     else:
-        print(f"Failed to create user: {response.status_code} - {response.text}")
+        print(f"❌ Failed to create user: {response.status_code} - {response.text}")
 
-# Delete a user by userPrincipalName
-def delete_user(token, user_principal_name):
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
-    # Get user ID first
-    response = requests.get(f"{GRAPH_API_ENDPOINT}/users/{user_principal_name}", headers=headers)
-    if response.status_code == 200:
-        user_id = response.json()["id"]
-        del_response = requests.delete(f"{GRAPH_API_ENDPOINT}/users/{user_id}", headers=headers)
-        if del_response.status_code == 204:
-            print(f"User {user_principal_name} deleted successfully.")
-        else:
-            print(f"Failed to delete user: {del_response.status_code} - {del_response.text}")
-    else:
-        print(f"User {user_principal_name} not found.")
-
+# === MAIN ===
 if __name__ == "__main__":
-    token = get_access_token()
-
-    # Demo: Create a user
-    create_user(token, "New User Demo", "newuserdemo@a114.mywiclab.com", "P@ssword1234")
-
-    # Demo: Delete a user
-    # delete_user(token, "newuserdemo@a114.mywiclab.com")
+    try:
+        token = get_access_token()
+        create_federated_user(token, "Federated User Demo", "federateduser@a114.mywiclab.com", "P@ssword1234")
+    except Exception as e:
+        print(f"Error: {e}")
