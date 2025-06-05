@@ -2,4 +2,4 @@
 Connect-AzureAD
 
 # Delete the user by UserPrincipalName
-Remove-AzureADUser -ObjectId "seconduserdemo@a114.mywiclab.com"
+Remove-AzureADUser -ObjectId "new.user11@a114.mywiclab.com"

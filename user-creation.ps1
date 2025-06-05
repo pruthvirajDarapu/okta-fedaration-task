@@ -3,9 +3,9 @@ Connect-AzureAD
 $ImmutableId = [Convert]::ToBase64String(([guid]::NewGuid()).ToByteArray())
 
 # Create a new Azure AD user
-New-AzureADUser -DisplayName "Second User Demo" `
-  -UserPrincipalName "new.user@a114.mywiclab.com" `
-  -MailNickname "newuser" `
+New-AzureADUser -DisplayName "new User Demo" `
+  -UserPrincipalName "new.user11@a114.mywiclab.com" `
+  -MailNickname "newuser11" `
   -AccountEnabled $true `
   -PasswordProfile @{
       Password = "P@ssword1234"

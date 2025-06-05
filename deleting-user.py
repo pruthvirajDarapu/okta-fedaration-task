@@ -1,15 +1,15 @@
+import subprocess
 import requests
 
 OKTA_DOMAIN = "https://demo-teal-antlion-29717-admin.okta.com"
-API_TOKEN = "00BNjo9Bsn9O-CFS9Xk12DXpdVAhsnYJ1QAOBSlLCa" #00BNjo9Bsn9O-CFS9Xk12DXpdVAhsnYJ1QAOBSlLCa
+API_TOKEN = "00BNjo9Bsn9O-CFS9Xk12DXpdVAhsnYJ1QAOBSlLCa"
 
-def delete_user(login):
+def delete_user_from_okta(login):
     headers = {
         "Authorization": f"SSWS {API_TOKEN}",
         "Content-Type": "application/json"
     }
 
-    # Step 1: Get user ID by login
     url = f"{OKTA_DOMAIN}/api/v1/users/{login}"
     response = requests.get(url, headers=headers)
 
@@ -17,25 +17,36 @@ def delete_user(login):
         user_id = response.json()["id"]
         print(f"Found user {login} with ID: {user_id}")
 
-        # Step 2: Deactivate user
         deactivate_url = f"{OKTA_DOMAIN}/api/v1/users/{user_id}/lifecycle/deactivate"
         deactivate_response = requests.post(deactivate_url, headers=headers)
 
         if deactivate_response.status_code == 200:
             print(f"User {login} deactivated successfully.")
 
-            # Step 3: Delete user
             delete_url = f"{OKTA_DOMAIN}/api/v1/users/{user_id}"
             delete_response = requests.delete(delete_url, headers=headers)
 
             if delete_response.status_code == 204:
-                print(f"User {login} deleted successfully.")
+                print(f"User {login} deleted from Okta.")
             else:
-                print(f"Failed to delete user: {delete_response.status_code} {delete_response.text}")
+                print(f"Failed to delete user from Okta: {delete_response.status_code} {delete_response.text}")
         else:
             print(f"Failed to deactivate user: {deactivate_response.status_code} {deactivate_response.text}")
     else:
-        print(f"User {login} not found: {response.status_code} {response.text}")
+        print(f"User {login} not found in Okta: {response.status_code} {response.text}")
+
+def delete_user_from_azure_ad(user_principal_name):
+    powershell_command = f"""
+    Connect-AzureAD
+    Remove-AzureADUser -ObjectId "{user_principal_name}" -Confirm:$false
+    """
+    try:
+        subprocess.run(["powershell", "-Command", powershell_command], check=True)
+        print(f"User {user_principal_name} deleted from Azure AD.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to delete user from Azure AD: {e}")
 
 # Example usage:
-delete_user("new.user11@a114.mywiclab.com")
+user_login = "new.user11@a114.mywiclab.com"
+delete_user_from_okta(user_login)
+delete_user_from_azure_ad(user_login)
