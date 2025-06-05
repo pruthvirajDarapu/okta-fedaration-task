@@ -84,10 +84,30 @@ def create_and_activate_user(first_name, last_name, login, email, password):
         print(f"Failed to activate user: {activate_response.status_code} {activate_response.text}")
 
 # Example usage:
-create_and_activate_user(
-    first_name="New",
-    last_name="User11",
-    login="new.user11@a114.mywiclab.com",
-    email="new.user11@a114.mywiclab.com",
-    password="P@ssword1234"
-)
+# List of users to be created
+users_to_create = [
+    {
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "login": "alice.smith@a114.mywiclab.com",
+        "email": "alice.smith@a114.mywiclab.com",
+        "password": "P@ssword1234"
+    },
+    {
+        "first_name": "Bob",
+        "last_name": "Jones",
+        "login": "bob.jones@a114.mywiclab.com",
+        "email": "bob.jones@a114.mywiclab.com",
+        "password": "P@ssword1234"
+    },
+    # Add more users here
+]
+
+for user in users_to_create:
+    create_and_activate_user(
+        first_name=user["first_name"],
+        last_name=user["last_name"],
+        login=user["login"],
+        email=user["email"],
+        password=user["password"]
+    )

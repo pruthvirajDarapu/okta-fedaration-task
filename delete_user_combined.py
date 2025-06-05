@@ -48,6 +48,13 @@ Remove-MgUser -UserId "{user_principal_name}" -Confirm:$false
         print(f"Failed to delete user from Azure AD: {e}")
 
 # Example usage:
-user_login = "new.user11@a114.mywiclab.com"
-delete_user_from_okta(user_login)
-delete_user_from_azure_ad(user_login)
+# List of users to delete
+users_to_delete = [
+    "alice.smith@a114.mywiclab.com",
+    "bob.jones@a114.mywiclab.com"
+]
+
+for user_login in users_to_delete:
+    delete_user_from_okta(user_login)
+    delete_user_from_azure_ad(user_login)
+

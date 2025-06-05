@@ -76,14 +76,33 @@ def create_and_activate_user(first_name, last_name, login, email, password):
 
     return user_id
 
-# Example usage
-first_name = "New"
-last_name = "User11"
-login = "new.user11@a114.mywiclab.com"
-email = login
-password = "P@ssword1234"
+# List of users to be created
+users_to_create = [
+    {
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "login": "alice.smith@a114.mywiclab.com",
+        "email": "alice.smith@a114.mywiclab.com",
+        "password": "P@ssword1234"
+    },
+    {
+        "first_name": "Bob",
+        "last_name": "Jones",
+        "login": "bob.jones@a114.mywiclab.com",
+        "email": "bob.jones@a114.mywiclab.com",
+        "password": "P@ssword1234"
+    },
+    # Add more users here
+]
 
-user_id = create_and_activate_user(first_name, last_name, login, email, password)
+for user in users_to_create:
+    create_and_activate_user(
+        first_name=user["first_name"],
+        last_name=user["last_name"],
+        login=user["login"],
+        email=user["email"],
+        password=user["password"]
+    )
 
 # Generate ImmutableId
 immutable_id = base64.b64encode(uuid.uuid4().bytes).decode('utf-8')
