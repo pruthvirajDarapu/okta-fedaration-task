@@ -76,25 +76,28 @@ def create_and_activate_user(first_name, last_name, login, email, password):
 
     return user_id
 
-# List of users to be created
-users_to_create = [
-    {
-        "first_name": "Alice",
-        "last_name": "Smith",
-        "login": "alice.smith@a114.mywiclab.com",
-        "email": "alice.smith@a114.mywiclab.com",
-        "password": "P@ssword1234"
-    },
-    {
-        "first_name": "Bob",
-        "last_name": "Jones",
-        "login": "bob.jones@a114.mywiclab.com",
-        "email": "bob.jones@a114.mywiclab.com",
-        "password": "P@ssword1234"
-    },
+# Raw list of users with just names
+raw_users = [
+    {"first_name": "Elon", "last_name": "Musk"},
+    {"first_name": "Indiana", "last_name": "Jones"},
     # Add more users here
 ]
 
+# Prepare full user data
+users_to_create = []
+for u in raw_users:
+    first = u["first_name"]
+    last = u["last_name"]
+    email = f"{first.lower()}.{last.lower()}@a114.mywiclab.com"
+    users_to_create.append({
+        "first_name": first,
+        "last_name": last,
+        "login": email,
+        "email": email,
+        "password": "P@ssword1234"
+    })
+
+# Process each user
 for user in users_to_create:
     first_name = user["first_name"]
     last_name = user["last_name"]
