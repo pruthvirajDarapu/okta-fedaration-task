@@ -96,27 +96,32 @@ users_to_create = [
 ]
 
 for user in users_to_create:
-    create_and_activate_user(
-        first_name=user["first_name"],
-        last_name=user["last_name"],
-        login=user["login"],
-        email=user["email"],
-        password=user["password"]
+    first_name = user["first_name"]
+    last_name = user["last_name"]
+    login = user["login"]
+    email = user["email"]
+    password = user["password"]
+
+    user_id = create_and_activate_user(
+        first_name=first_name,
+        last_name=last_name,
+        login=login,
+        email=email,
+        password=password
     )
 
-# Generate ImmutableId
-immutable_id = base64.b64encode(uuid.uuid4().bytes).decode('utf-8')
-print(f"Generated ImmutableId: {immutable_id}")
+    if user_id:
+        immutable_id = base64.b64encode(uuid.uuid4().bytes).decode('utf-8')
+        print(f"Generated ImmutableId: {immutable_id}")
 
-# Call PowerShell to create Azure AD user
-powershell_script = f'''
-Connect-AzureAD
-New-AzureADUser -DisplayName "{first_name} {last_name}" `
-    -UserPrincipalName "{login}" `
-    -MailNickname "{login.split('@')[0]}" `
-    -AccountEnabled $true `
-    -PasswordProfile @{{ Password = "{password}"; ForceChangePasswordNextLogin = $true }} `
-    -ImmutableId "{immutable_id}"
-'''
+        powershell_script = f'''
+        Connect-AzureAD
+        New-AzureADUser -DisplayName "{first_name} {last_name}" `
+            -UserPrincipalName "{login}" `
+            -MailNickname "{login.split('@')[0]}" `
+            -AccountEnabled $true `
+            -PasswordProfile @{{ Password = "{password}"; ForceChangePasswordNextLogin = $true }} `
+            -ImmutableId "{immutable_id}"
+        '''
 
-subprocess.run(["powershell", "-Command", powershell_script], shell=True)
+        subprocess.run(["powershell", "-Command", powershell_script], shell=True)
