@@ -50,7 +50,6 @@ Remove-MgUser -UserId "{user_principal_name}" -Confirm:$false
 # Example usage:
 # List of users to delete
 users_to_delete = [
-    "indiana.jones@a114.mywiclab.com",
     "elon.musk@a114.mywiclab.com"
 ]
 

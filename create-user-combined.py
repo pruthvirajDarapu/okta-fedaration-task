@@ -78,8 +78,9 @@ def create_and_activate_user(first_name, last_name, login, email, password):
 
 # Raw list of users with just names
 raw_users = [
-    {"first_name": "Elon", "last_name": "Musk"},
-    {"first_name": "Indiana", "last_name": "Jones"},
+    {"first_name": "elon", "last_name": "musk"},
+    #{"first_name": "stuart", "last_name": "beard"},
+    #{"first_name": "vishal", "last_name": "pandey"}
     # Add more users here
 ]
 
@@ -113,18 +114,18 @@ for user in users_to_create:
         password=password
     )
 
-    if user_id:
-        immutable_id = base64.b64encode(uuid.uuid4().bytes).decode('utf-8')
-        print(f"Generated ImmutableId: {immutable_id}")
+   # if user_id:
+     #   immutable_id = base64.b64encode(uuid.uuid4().bytes).decode('utf-8')
+     #   print(f"Generated ImmutableId: {immutable_id}")
 
-        powershell_script = f'''
-        Connect-AzureAD
-        New-AzureADUser -DisplayName "{first_name} {last_name}" `
-            -UserPrincipalName "{login}" `
-            -MailNickname "{login.split('@')[0]}" `
-            -AccountEnabled $true `
-            -PasswordProfile @{{ Password = "{password}"; ForceChangePasswordNextLogin = $true }} `
-            -ImmutableId "{immutable_id}"
-        '''
+       # powershell_script = f'''
+       # Connect-AzureAD
+       # New-AzureADUser -DisplayName "{first_name} {last_name}" `
+         #   -UserPrincipalName "{login}" `
+          #  -MailNickname "{login.split('@')[0]}" `
+            #-AccountEnabled $true `
+           # -PasswordProfile @{{ Password = "{password}"; ForceChangePasswordNextLogin = $true }} `
+            #-ImmutableId "{immutable_id}"
+       # '''
 
-        subprocess.run(["powershell", "-Command", powershell_script], shell=True)
+        #subprocess.run(["powershell", "-Command", powershell_script], shell=True)
